@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Descubra se você precisa fazer sua saída fiscal. Diagnóstico gratuito para brasileiros no exterior.">
+  <title>Diagnóstico Gratuito: Você Está Irregular com a Receita Federal?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0f1f3d;
+      --navy-mid: #1a3260;
+      --blue: #1e40af;
+      --red: #e63946;
+      --orange: #f4800d;
+      --amber: #d97706;
+      --green: #059669;
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 14px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ===== PROGRESS BAR ===== */
+    #progress-bar-wrap {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: var(--navy);
+      padding: 10px 20px;
+      align-items: center;
+      gap: 12px;
+    }
+    #progress-bar-wrap.active { display: flex; }
+    #progress-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 5%;
+    }
+    #progress-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      white-space: nowrap;
+    }
+
+    /* ===== ALERT BANNER ===== */
+    #alert-banner {
+      background: #7f1d1d;
+      color: #fecaca;
+      text-align: center;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+    }
+    #alert-banner strong { color: #fff; }
+
+    /* ===== HERO ===== */
+    #hero {
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(246,128,13,0.18);
+      border: 1px solid rgba(246,128,13,0.4);
+      color: var(--orange);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+    #hero h1 {
+      font-size: clamp(26px, 5vw, 46px);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 18px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #hero h1 span { color: var(--orange); }
+    #hero p.sub {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: rgba(255,255,255,0.78);
+      max-width: 620px;
+      margin: 0 auto 32px;
+      font-weight: 400;
+    }
+    .pain-list {
+      list-style: none;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: left;
+      margin-bottom: 36px;
+    }
+    .pain-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 15px;
+      color: rgba(255,255,255,0.85);
+    }
+    .pain-list li::before {
+      content: "✗";
+      color: #f87171;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--red), #c1121f);
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 17px 36px;
+      border-radius: 99px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 24px rgba(230,57,70,0.45);
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(230,57,70,0.55); }
+    .btn-primary:active { transform: translateY(0); }
+    .hero-sub-cta {
+      margin-top: 12px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+    }
+    .hero-credentials {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+    .cred-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.55);
+    }
+    .cred-item .icon { font-size: 18px; }
+
+    /* ===== QUIZ SECTION ===== */
+    #quiz-section {
+      display: none;
+      padding: 80px 20px 60px;
+      min-height: 100vh;
+    }
+    .quiz-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .question-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 32px 28px 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      animation: slideUp 0.35s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .q-phase {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 6px;
+    }
+    .q-text {
+      font-size: clamp(18px, 3vw, 22px);
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--navy);
+      margin-bottom: 24px;
+    }
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .opt-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+      text-align: left;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+    .opt-card:hover { border-color: var(--blue); background: #eff6ff; }
+    .opt-card.selected { border-color: var(--blue); background: #eff6ff; }
+    .opt-card.selected .opt-dot { background: var(--blue); border-color: var(--blue); }
+    .opt-card.selected .opt-dot::after { display: block; }
+    .opt-dot {
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .opt-dot::after {
+      content: '';
+      display: none;
+      width: 8px; height: 8px;
+      background: white;
+      border-radius: 50%;
+    }
+    .opt-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    /* Tip box */
+    .tip-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      line-height: 1.55;
+      font-weight: 500;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .tip-box.warning {
+      background: #fff7ed;
+      border-left: 4px solid var(--amber);
+      color: #92400e;
+    }
+    .tip-box.danger {
+      background: #fff1f2;
+      border-left: 4px solid var(--red);
+      color: #9f1239;
+    }
+
+    /* Next button */
+    .btn-next {
+      display: none;
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      background: var(--navy);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-next:hover { background: var(--navy-mid); transform: translateY(-1px); }
+    .btn-next.visible { display: block; animation: fadeIn 0.25s ease; }
+
+    /* ===== CAPTURE SECTION ===== */
+    #capture-section {
+      display: none;
+      padding: 80px 20px 60px;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+    #capture-section.active { display: flex; }
+    .capture-inner {
+      max-width: 540px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    /* Loading state */
+    #capture-loading {
+      text-align: center;
+    }
+    .spinner-wrap {
+      width: 72px; height: 72px;
+      margin: 0 auto 20px;
+      border: 5px solid #e2e8f0;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #capture-loading h3 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    #capture-loading p { color: var(--muted); font-size: 14px; }
+
+    /* Form state */
+    #capture-form-wrap {
+      display: none;
+      animation: slideUp 0.4s ease;
+    }
+    .capture-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.1);
+    }
+    .capture-icon { font-size: 44px; margin-bottom: 12px; }
+    .capture-card h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .capture-card p.sub {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .form-group { margin-bottom: 16px; text-align: left; }
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--blue); }
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .consent-row input { width: 16px; height: 16px; flex-shrink: 0; margin-top: 1px; cursor: pointer; }
+    .btn-capture {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--red), #c1121f);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 17px;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 20px rgba(230,57,70,0.4);
+    }
+    .btn-capture:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(230,57,70,0.5); }
+    .privacy-note { margin-top: 12px; font-size: 12px; color: var(--muted); }
+
+    /* ===== RESULT SECTION ===== */
+    #result-section {
+      display: none;
+      padding: 80px 20px 80px;
+    }
+    .result-inner { max-width: 720px; margin: 0 auto; }
+
+    /* Tier badge */
+    .tier-card {
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      margin-bottom: 28px;
+      text-align: center;
+      animation: slideUp 0.4s ease;
+    }
+    .tier-card.critico  { background: linear-gradient(135deg, #7f1d1d, #991b1b); color: white; }
+    .tier-card.risco    { background: linear-gradient(135deg, #78350f, #92400e); color: white; }
+    .tier-card.atencao  { background: linear-gradient(135deg, #1e3a5f, #1e40af); color: white; }
+    .tier-icon { font-size: 52px; margin-bottom: 10px; }
+    .tier-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 4px;
+    }
+    .tier-card h2 {
+      font-size: clamp(20px, 3.5vw, 28px);
+      font-weight: 900;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .tier-card p { font-size: 15px; opacity: 0.85; }
+
+    /* Risk factors */
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 14px;
+    }
+    #risk-factors-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      animation: slideUp 0.5s ease 0.1s both;
+    }
+    .risk-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14.5px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .risk-item:last-child { border-bottom: none; }
+    .risk-item .r-icon { flex-shrink: 0; font-size: 17px; margin-top: 1px; }
+
+    /* Consequences */
+    #consequences-card {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 24px;
+      animation: slideUp 0.5s ease 0.2s both;
+    }
+    #consequences-card .section-title { color: #9f1239; }
+    .cons-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 14px;
+      color: #881337;
+      border-bottom: 1px solid #fecdd3;
+    }
+    .cons-item:last-child { border-bottom: none; }
+    .cons-item .c-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* Ebook CTA block */
+    #ebook-cta {
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      color: white;
+      text-align: center;
+      margin-bottom: 24px;
+      animation: slideUp 0.5s ease 0.3s both;
+    }
+    .ebook-pretitle {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 10px;
+    }
+    #ebook-cta h3 {
+      font-size: clamp(20px, 3vw, 26px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+    #ebook-cta p.sub {
+      font-size: 14.5px;
+      color: rgba(255,255,255,0.72);
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+    .ebook-includes {
+      list-style: none;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+    .ebook-includes li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 14px;
+      color: rgba(255,255,255,0.85);
+    }
+    .ebook-includes li::before { content: "✓"; color: #4ade80; font-weight: 700; flex-shrink: 0; }
+    .price-block {
+      margin-bottom: 24px;
+    }
+    .price-from {
+      font-size: 13px;
+      text-decoration: line-through;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 2px;
+    }
+    .price-now {
+      font-size: 40px;
+      font-weight: 900;
+      color: white;
+      line-height: 1;
+    }
+    .price-now span { font-size: 22px; vertical-align: super; font-weight: 700; }
+    .price-note { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+    .btn-ebook {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--orange), #e65c00);
+      color: white;
+      font-size: 17px;
+      font-weight: 800;
+      padding: 18px 40px;
+      border-radius: 99px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 6px 24px rgba(230,90,0,0.5);
+      cursor: pointer;
+      border: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-ebook:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(230,90,0,0.6); }
+    .guarantee {
+      margin-top: 16px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+    }
+    /* Ebook layout with cover */
+    .ebook-layout {
+      display: flex;
+      gap: 28px;
+      align-items: flex-start;
+      text-align: left;
+      margin-bottom: 4px;
+    }
+    .ebook-cover-wrap {
+      flex-shrink: 0;
+      width: 170px;
+    }
+    .ebook-cover-img {
+      width: 100%;
+      border-radius: 6px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6), 4px 4px 0 rgba(0,0,0,0.3);
+      display: block;
+    }
+    .ebook-details { flex: 1; }
+    .ebook-details .ebook-includes { margin-bottom: 20px; }
+    .ebook-details .price-block { margin-bottom: 16px; }
+    .ebook-details .btn-ebook { width: 100%; }
+    @media (max-width: 580px) {
+      .ebook-layout { flex-direction: column; align-items: center; text-align: center; }
+      .ebook-cover-wrap { width: 140px; }
+      .ebook-includes { text-align: left; }
+    }
+
+    /* Lawyer credibility footer */
+    #lawyer-footer {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      animation: slideUp 0.5s ease 0.4s both;
+    }
+    .lawyer-avatar {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .lawyer-info h4 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 3px; }
+    .lawyer-info p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+    /* ===== MULTI-SELECT ===== */
+    .multi-hint {
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 500;
+      margin-top: -16px;
+      margin-bottom: 14px;
+    }
+    .options-grid.multi-select .opt-dot { border-radius: 4px; }
+    .opt-card.multi-selected { border-color: var(--blue); background: #eff6ff; }
+    .opt-card.multi-selected .opt-dot { background: var(--blue); border-color: var(--blue); }
+    .opt-card.multi-selected .opt-dot::after { display: block; }
+
+    /* ===== COUNTRY GRID ===== */
+    .options-grid.country-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .options-grid.country-grid .opt-card { padding: 11px 14px; font-size: 14px; }
+    @media (max-width: 420px) {
+      .options-grid.country-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ===== RESPONSIVENESS ===== */
+    @media (max-width: 600px) {
+      #hero { padding: 60px 16px 40px; }
+      .hero-credentials { gap: 16px; }
+      .question-card { padding: 24px 16px 20px; }
+      .capture-card { padding: 28px 20px; }
+      #ebook-cta { padding: 28px 20px; }
+      #lawyer-footer { flex-direction: column; align-items: center; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed progress bar -->
+  <div id="progress-bar-wrap">
+    <div id="progress-track"><div id="progress-fill"></div></div>
+    <span id="progress-label">1 de 20</span>
+  </div>
+
+  <!-- Alert banner -->
+  <div id="alert-banner">
+    <strong>⚠️ NOVO:</strong> Receita Federal intensifica cruzamento de dados com autoridades fiscais de <strong>47 países</strong> — brasileiros irregulares estão sendo notificados.
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section id="hero">
+    <div class="hero-badge">✦ Diagnóstico Gratuito · Leva menos de 4 minutos</div>
+    <h1>Você está <span>irregular com a Receita Federal</span> sem saber?</h1>
+    <p class="sub">9 em cada 10 brasileiros no exterior têm pelo menos 1 irregularidade fiscal que pode custar caro. Descubra agora qual é a sua situação.</p>
+
+    <ul class="pain-list">
+      <li>Multas retroativas podem chegar a <strong>R$ 20.000+</strong> por cada ano irregular</li>
+      <li>Sem a saída fiscal correta, você continua tributado no Brasil sobre <strong>toda sua renda no exterior</strong></li>
+      <li>Seu CPF pode ser bloqueado, impedindo <strong>venda de imóveis, crédito e serviços financeiros</strong></li>
+    </ul>
+
+    <button class="btn-primary" onclick="startQuiz()">FAZER MEU DIAGNÓSTICO GRATUITO →</button>
+    <p class="hero-sub-cta">⏱ 4 minutos · Totalmente gratuito · Resultado imediato</p>
+
+    <div class="hero-credentials">
+      <div class="cred-item"><span class="icon">⚖️</span> Adv. Jéssica Cavalcante · OAB 63.781/PE</div>
+      <div class="cred-item"><span class="icon">🔒</span> 100% Confidencial</div>
+      <div class="cred-item"><span class="icon">🌍</span> Para Brasileiros no Exterior</div>
+    </div>
+  </section>
+
+  <!-- ===== QUIZ ===== -->
+  <section id="quiz-section">
+    <div class="quiz-inner">
+      <div id="question-area"></div>
+    </div>
+  </section>
+
+  <!-- ===== CAPTURE ===== -->
+  <section id="capture-section">
+    <div class="capture-inner">
+      <div id="capture-loading">
+        <div class="spinner-wrap"></div>
+        <h3>Analisando suas respostas…</h3>
+        <p>Identificando os pontos de atenção na sua situação fiscal</p>
+      </div>
+      <div id="capture-form-wrap">
+        <div class="capture-card">
+          <div class="capture-icon">📋</div>
+          <h2>Seu diagnóstico está pronto!</h2>
+          <p class="sub">Identificamos pontos importantes na sua situação. Digite seu nome e e-mail para receber seu diagnóstico personalizado agora.</p>
+          <div class="form-group">
+            <label for="user-name">Seu primeiro nome</label>
+            <input type="text" id="user-name" placeholder="Ex: Maria" autocomplete="given-name">
+          </div>
+          <div class="form-group">
+            <label for="user-email">Seu melhor e-mail</label>
+            <input type="email" id="user-email" placeholder="Ex: maria@email.com" autocomplete="email">
+          </div>
+          <div class="consent-row">
+            <input type="checkbox" id="consent" checked>
+            <label for="consent">Concordo em receber informações por e-mail. Seus dados são protegidos e não serão compartilhados com terceiros.</label>
+          </div>
+          <button class="btn-capture" onclick="submitCapture()">VER MEU DIAGNÓSTICO AGORA →</button>
+          <p class="privacy-note">🔒 Seus dados estão seguros. Sem spam.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESULT ===== -->
+  <section id="result-section">
+    <div class="result-inner">
+      <div id="tier-card-area"></div>
+      <div id="risk-factors-card">
+        <div class="section-title">🔍 Pontos de atenção identificados na sua situação</div>
+        <div id="risk-factors-list"></div>
+      </div>
+      <div id="consequences-card">
+        <div class="section-title">⚠️ O que pode acontecer se você não resolver isso?</div>
+        <div class="cons-item"><span class="c-icon">💸</span> Multas retroativas de até <strong>R$ 20.000,00</strong> + juros Selic por cada ano irregular com a Receita Federal</div>
+        <div class="cons-item"><span class="c-icon">🚫</span> <strong>CPF bloqueado</strong> — impossibilidade de vender imóveis, abrir conta, contratar crédito ou serviços no Brasil</div>
+        <div class="cons-item"><span class="c-icon">💰</span> <strong>Tributação indevida</strong> sobre toda sua renda no exterior como se você ainda morasse no Brasil</div>
+        <div class="cons-item"><span class="c-icon">📩</span> <strong>Dívida Ativa</strong> com execução fiscal — a Receita pode penhorar bens que você tem no Brasil</div>
+        <div class="cons-item"><span class="c-icon">🌐</span> Problemas para <strong>repatriar dinheiro</strong> do exterior ou realizar transferências internacionais</div>
+      </div>
+      <div id="ebook-cta">
+        <div class="ebook-pretitle">✦ A solução que você precisa</div>
+        <h3>Descomplicando Saída Fiscal para Brasileiros no Exterior</h3>
+        <p class="sub">O guia definitivo para regularizar sua situação com a Receita Federal — passo a passo, sem juridiquês e sem erros.</p>
+        <div class="ebook-layout">
+          <div class="ebook-cover-wrap">
+            <!-- Salve a imagem da capa como "ebook-capa.png" na mesma pasta deste arquivo -->
+            <img src="ebook-capa.png" alt="Capa do Ebook Descomplicando Saída Fiscal" class="ebook-cover-img" onerror="this.style.display='none'">
+          </div>
+          <div class="ebook-details">
+            <ul class="ebook-includes">
+              <li>O que é a Saída Fiscal e quando você é obrigado a fazer</li>
+              <li>Diferença entre Saída Temporária e Definitiva — e qual se aplica a você</li>
+              <li>Passo a passo para entregar a Declaração de Saída Definitiva</li>
+              <li>Como tratar imóveis, investimentos e empresas no processo</li>
+              <li>O que fazer com renda de fonte brasileira sendo não residente</li>
+              <li>Como evitar a bitributação e reduzir legalmente sua carga fiscal</li>
+              <li>Checklist completo de regularização para usar agora</li>
+            </ul>
+            <div class="price-block">
+              <div class="price-from">De R$ 197,00</div>
+              <div class="price-now"><span>R$</span> 97</div>
+              <div class="price-note">Acesso imediato · Formato digital</div>
+            </div>
+            <button class="btn-ebook" onclick="window.open('#ebook-link','_blank')">QUERO MEU EBOOK AGORA →</button>
+            <p class="guarantee">🛡️ Garantia de 7 dias. Se não gostar, devolvemos 100% do seu investimento.</p>
+          </div>
+        </div>
+      </div>
+      <div id="lawyer-footer">
+        <div class="lawyer-avatar">⚖️</div>
+        <div class="lawyer-info">
+          <h4>Adv. Jéssica Cavalcante · OAB 63.781/PE</h4>
+          <p>Advogada Especialista em Direito Fiscal Internacional e Saída Fiscal para Brasileiros no Exterior. Este diagnóstico foi desenvolvido para ajudar brasileiros a entenderem e regularizarem sua situação com a Receita Federal de forma segura e eficiente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    // ─── DATA ───────────────────────────────────────────────────────────────────
+
+    const questions = [
+      {
+        phase: "Sua Situação Atual",
+        text: "Qual dessas opções melhor descreve sua situação atual com o Brasil?",
+        options: [
+          { text: "Moro atualmente no exterior", risk: 2 },
+          { text: "Já morei fora, mas voltei ao Brasil", risk: 1 },
+          { text: "Estou planejando sair do Brasil em breve", risk: 1 },
+          { text: "Moro no Brasil e não planejo sair", risk: 0 }
+        ],
+        tip: null
+      },
+      {
+        phase: "Sua Situação Atual",
+        text: "Há quanto tempo você mora (ou morou) fora do Brasil?",
+        options: [
+          { text: "Menos de 1 ano", risk: 1 },
+          { text: "Entre 1 e 3 anos", risk: 2 },
+          { text: "Entre 3 e 5 anos", risk: 2 },
+          { text: "Mais de 6 anos", risk: 3 }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 1,
+          text: "⏰ A partir de 12 meses fora, a Receita Federal pode considerá-lo 'não residente fiscal' — com obrigações específicas que a maioria dos brasileiros desconhece."
+        }
+      },
+      {
+        phase: "Declarações e Obrigações",
+        text: "Você já entregou a Declaração de Saída Definitiva à Receita Federal?",
+        options: [
+          { text: "Sim, já entreguei corretamente", risk: 0 },
+          { text: "Não, nunca ouvi falar disso", risk: 3 },
+          { text: "Acho que sim, mas não tenho certeza", risk: 2 },
+          { text: "Ainda não fiz, mas sei que preciso", risk: 2 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 2,
+          text: "🚨 A ausência da Declaração de Saída é uma das principais causas de autuação da Receita Federal contra brasileiros no exterior. Sem ela, você segue sendo tributado como residente — sobre toda sua renda, mesmo a obtida fora do Brasil."
+        }
+      },
+      {
+        phase: "Declarações e Obrigações",
+        text: "Como você tem feito sua declaração de Imposto de Renda nos últimos anos?",
+        options: [
+          { text: "Declaro anualmente como residente no Brasil", risk: 2 },
+          { text: "Não declaro mais desde que saí — parei", risk: 2 },
+          { text: "Declaro como não residente (DCTF mensal)", risk: 0 },
+          { text: "Nunca declarei e não sei o que fazer", risk: 3 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 2,
+          text: "💡 Declarar como residente estando no exterior gera bitributação. Não declarar gera multa automática de R$ 165,74 a R$ 20.000,00. A forma correta depende do seu status: residente ou não residente."
+        }
+      },
+      {
+        phase: "Seus Bens no Brasil",
+        text: "Você tem conta bancária ativa no Brasil?",
+        options: [
+          { text: "Sim, uso regularmente", risk: 2 },
+          { text: "Sim, mas não uso — só mantive aberta", risk: 1 },
+          { text: "Tive, mas encerrei formalmente", risk: 0 },
+          { text: "Não tenho conta no Brasil", risk: 0 }
+        ],
+        tip: null
+      },
+      {
+        phase: "Seus Bens no Brasil",
+        text: "Você possui imóveis no Brasil? (casa, apartamento, terreno, etc.)",
+        options: [
+          { text: "Sim, tenho imóvel(s) em meu nome", risk: 2 },
+          { text: "Sim, tenho em conjunto com outra pessoa", risk: 1 },
+          { text: "Tive, mas vendi e regularizei", risk: 0 },
+          { text: "Nunca tive imóveis no Brasil", risk: 0 }
+        ],
+        tip: null
+      },
+      {
+        phase: "Seus Bens no Brasil",
+        text: "Você tem investimentos financeiros no Brasil? (ações, fundos, CDB, poupança, previdência…)",
+        options: [
+          { text: "Sim, e administro ativamente", risk: 2 },
+          { text: "Sim, mas estão 'parados' há um tempo", risk: 2 },
+          { text: "Já tive, mas resgatei tudo", risk: 0 },
+          { text: "Nunca tive investimentos no Brasil", risk: 0 }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 2,
+          text: "⚠️ Investimentos mantidos por não residentes têm regras específicas de tributação na fonte. Sem a adequação do seu status bancário, você pode estar sofrendo retenções incorretas — a mais ou a menos."
+        }
+      },
+      {
+        phase: "Renda e Vínculos com o Brasil",
+        text: "Você recebe algum tipo de renda originada no Brasil?",
+        multiSelect: true,
+        options: [
+          { text: "Aluguel de imóvel", risk: 2 },
+          { text: "Salário, pró-labore ou honorários", risk: 2 },
+          { text: "Aposentadoria ou pensão", risk: 1 },
+          { text: "Não recebo nenhuma renda do Brasil", risk: 0, exclusive: true }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 1,
+          text: "💰 Toda renda de fonte brasileira recebida por não residente tem tributação específica na fonte. Sem a regularização do seu status fiscal, o pagador pode estar retendo de forma incorreta — e você pode ser responsabilizado."
+        }
+      },
+      {
+        phase: "Renda e Vínculos com o Brasil",
+        text: "Você tem (ou já teve) empresa aberta no Brasil (CNPJ)?",
+        options: [
+          { text: "Sim, tenho CNPJ ativo hoje", risk: 2 },
+          { text: "Tive, mas encerrei formalmente", risk: 0 },
+          { text: "Tive, mas só 'abandonei' — sem encerrar", risk: 3 },
+          { text: "Nunca tive CNPJ no Brasil", risk: 0 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 3,
+          text: "🚨 Empresas 'abandonadas' continuam gerando obrigações fiscais mensais. Multas por não entrega de declarações podem ultrapassar R$ 1.000 por mês e se acumulam por anos — sem você saber."
+        }
+      },
+      {
+        phase: "Seu Conhecimento Fiscal",
+        text: "Você conhece a diferença entre 'Saída Temporária' e 'Saída Definitiva'?",
+        options: [
+          { text: "Sim, conheço bem a distinção", risk: 0 },
+          { text: "Ouvi falar, mas não entendo a diferença", risk: 1 },
+          { text: "Nunca ouvi essa distinção antes", risk: 2 },
+          { text: "Achei que eram sinônimos", risk: 2 }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 1,
+          text: "📌 A diferença é crítica: na Saída Temporária, você continua tributado no Brasil. Na Saída Definitiva, cessa a tributação como residente. Confundir as duas é um dos erros mais caros que um brasileiro pode cometer no exterior."
+        }
+      },
+      {
+        phase: "Seu Conhecimento Fiscal",
+        text: "Você tem clareza sobre suas obrigações fiscais como brasileiro no exterior?",
+        options: [
+          { text: "Sim, estou bem informado e assessorado", risk: 0 },
+          { text: "Tenho uma ideia, mas tenho muitas dúvidas", risk: 1 },
+          { text: "Não tenho clareza nenhuma", risk: 2 },
+          { text: "Nunca me preocupei com isso", risk: 3 }
+        ],
+        tip: null
+      },
+      {
+        phase: "Sua Situação Cadastral",
+        text: "Como está a situação do seu CPF junto à Receita Federal?",
+        options: [
+          { text: "Ativo, regular e sem pendências", risk: 0 },
+          { text: "Ativo, mas com alguma pendência", risk: 2 },
+          { text: "Suspenso ou com restrições", risk: 3 },
+          { text: "Não sei qual é o status do meu CPF", risk: 2 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 2,
+          text: "🔴 CPF com pendências pode gerar bloqueio de serviços bancários, impossibilidade de vender imóveis, e problemas na declaração de bens no país onde você mora."
+        }
+      },
+      {
+        phase: "Sua Situação Cadastral",
+        text: "Você tem alguém de confiança cuidando dos seus assuntos fiscais no Brasil?",
+        options: [
+          { text: "Sim, tenho contador ou advogado especializado", risk: 0 },
+          { text: "Tenho familiar/amigo que 'dá uma olhada'", risk: 1 },
+          { text: "Não tenho ninguém — cuido (ou não cuido) eu mesmo", risk: 2 },
+          { text: "Nunca pensei nisso", risk: 2 }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 1,
+          text: "💡 Tributação de não residentes é uma área altamente específica do Direito Tributário. Um contador generalista pode não estar apto para lidar com as particularidades da sua situação."
+        }
+      },
+      {
+        phase: "Transações e Patrimônio",
+        text: "Você tem ou já considerou repatriar dinheiro ou ativos do exterior para o Brasil?",
+        options: [
+          { text: "Sim, já fiz isso ou estou planejando", risk: 2 },
+          { text: "Talvez no futuro", risk: 1 },
+          { text: "Não tenho planos", risk: 0 },
+          { text: "Não sei como funciona ou se é necessário", risk: 2 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 2,
+          text: "⚠️ A repatriação de recursos sem a regularização prévia da saída fiscal pode gerar tributação adicional, declarações obrigatórias ao Banco Central e até investigação por evasão de divisas."
+        }
+      },
+      {
+        phase: "Transações e Patrimônio",
+        text: "Você planeja vender imóvel, resgatar investimento ou receber herança no Brasil?",
+        options: [
+          { text: "Sim, nos próximos 12 meses", risk: 2 },
+          { text: "Talvez nos próximos 2-3 anos", risk: 1 },
+          { text: "Não tenho planos para isso", risk: 0 },
+          { text: "Já fiz uma dessas transações recentemente", risk: 2 }
+        ],
+        tip: {
+          type: "warning",
+          minRisk: 1,
+          text: "💡 Não residentes que alienam bens no Brasil têm alíquota diferenciada de ganho de capital (15–22,5% de IRRF retido na fonte). Sem a regularização, o comprador retém mais do que deveria — e você não consegue recuperar a diferença facilmente."
+        }
+      },
+      {
+        phase: "Vínculos Familiares",
+        text: "Você tem dependentes ou família com bens em conjunto no Brasil?",
+        options: [
+          { text: "Sim, tenho dependentes no Brasil (filhos, cônjuge, pais)", risk: 1 },
+          { text: "Sim, tenho bens em conjunto com familiar no Brasil", risk: 1 },
+          { text: "Tenho família no Brasil mas sem vínculos financeiros", risk: 0 },
+          { text: "Não tenho família ou dependentes no Brasil", risk: 0 }
+        ],
+        tip: null
+      },
+      {
+        phase: "Bens no Exterior",
+        text: "Quando você ainda era residente no Brasil, você declarou seus bens no exterior no IRPF?",
+        options: [
+          { text: "Sim, declarei tudo corretamente", risk: 0 },
+          { text: "Declarei parcialmente — não sabia que tinha que declarar tudo", risk: 2 },
+          { text: "Não declarei nada", risk: 3 },
+          { text: "Nunca soube que precisava declarar bens no exterior", risk: 2 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 2,
+          text: "🚨 A omissão de bens no exterior é tipificada como sonegação fiscal. Mesmo valores pequenos devem ser declarados. A janela de anistia de 2016 encerrou — quem não regularizou enfrenta riscos significativos hoje."
+        }
+      },
+      {
+        phase: "Histórico com a Receita",
+        text: "Você já recebeu alguma comunicação, notificação ou pendência da Receita Federal?",
+        options: [
+          { text: "Sim, recebi e ainda não resolvi", risk: 3 },
+          { text: "Sim, recebi e acredito ter resolvido", risk: 1 },
+          { text: "Não recebi nenhuma comunicação", risk: 0 },
+          { text: "Não sei — não acompanho minha situação fiscal", risk: 2 }
+        ],
+        tip: {
+          type: "danger",
+          minRisk: 3,
+          text: "🔴 Comunicações da Receita não respondidas evoluem automaticamente: Notificação → Lançamento → Dívida Ativa → Execução Fiscal. Nessa última fase, o CPF é bloqueado e bens no Brasil podem ser penhorados."
+        }
+      },
+      {
+        phase: "Seu País de Residência",
+        text: "Em qual país você reside atualmente?",
+        countryGrid: true,
+        options: [
+          { text: "🇺🇸 Estados Unidos", risk: 2, treaty: false },
+          { text: "🇵🇹 Portugal", risk: 1, treaty: true },
+          { text: "🇬🇧 Reino Unido", risk: 2, treaty: false },
+          { text: "🇩🇪 Alemanha", risk: 1, treaty: true },
+          { text: "🇯🇵 Japão", risk: 1, treaty: true },
+          { text: "🇦🇷 Argentina", risk: 2, treaty: false },
+          { text: "🇮🇹 Itália", risk: 1, treaty: true },
+          { text: "🇦🇺 Austrália", risk: 2, treaty: false },
+          { text: "🇪🇸 Espanha", risk: 1, treaty: true },
+          { text: "🇨🇦 Canadá", risk: 2, treaty: false },
+          { text: "🇨🇭 Suíça", risk: 1, treaty: true },
+          { text: "🇦🇪 Emirados Árabes", risk: 2, treaty: false },
+          { text: "🇫🇷 França", risk: 1, treaty: true },
+          { text: "🌍 Outro país", risk: 1, treaty: null }
+        ],
+        tip: { type: "dynamic", minRisk: 0 }
+      },
+      {
+        phase: "Autoavaliação",
+        text: "Por fim: como você descreveria seu nível de preocupação com sua situação fiscal?",
+        options: [
+          { text: "Muito preocupado — sei que tenho problemas a resolver", risk: 2 },
+          { text: "Um pouco preocupado — acho que pode ter algo errado", risk: 1 },
+          { text: "Não estava preocupado, mas esse quiz me fez pensar", risk: 1 },
+          { text: "Não me preocupo — acredito estar tudo em ordem", risk: 0 }
+        ],
+        tip: null
+      }
+    ];
+
+    // ─── STATE ───────────────────────────────────────────────────────────────────
+    let currentQ = 0;
+    let answers = [];   // array of { optionIndex, risk }
+    let totalScore = 0;
+    let userName = '';
+    let userEmail = '';
+
+    // ─── INIT ────────────────────────────────────────────────────────────────────
+    function startQuiz() {
+      document.getElementById('hero').style.display = 'none';
+      document.getElementById('alert-banner').style.display = 'none';
+      document.getElementById('quiz-section').style.display = 'block';
+      document.getElementById('progress-bar-wrap').classList.add('active');
+      currentQ = 0;
+      answers = [];
+      totalScore = 0;
+      renderQuestion(0);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateProgress() {
+      const pct = Math.round(((currentQ) / questions.length) * 100);
+      document.getElementById('progress-fill').style.width = Math.max(pct, 3) + '%';
+      document.getElementById('progress-label').textContent = (currentQ + 1) + ' de ' + questions.length;
+    }
+
+    // ─── RENDER QUESTION ─────────────────────────────────────────────────────────
+    function renderQuestion(index) {
+      updateProgress();
+      const q = questions[index];
+      const area = document.getElementById('question-area');
+
+      const gridClass = q.countryGrid ? 'country-grid' : (q.multiSelect ? 'multi-select' : '');
+
+      let optionsHTML = q.options.map((opt, i) =>
+        `<button class="opt-card" onclick="selectOption(${i})" id="opt-${i}">
+          <div class="opt-dot" id="dot-${i}"></div>
+          <span class="opt-text">${opt.text}</span>
+        </button>`
+      ).join('');
+
+      let tipHTML = q.tip
+        ? `<div class="tip-box ${q.tip.type === 'dynamic' ? 'warning' : q.tip.type}" id="tip-box" style="display:none">${q.tip.text || ''}</div>`
+        : '';
+
+      const multiHint = q.multiSelect
+        ? `<div class="multi-hint">Selecione todas as que se aplicam</div>`
+        : '';
+
+      area.innerHTML = `
+        <div class="question-card">
+          <div class="q-phase">${q.phase} — Pergunta ${index + 1}</div>
+          <div class="q-text">${q.text}</div>
+          ${multiHint}
+          <div class="options-grid ${gridClass}">${optionsHTML}</div>
+          ${tipHTML}
+          <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+            ${index < questions.length - 1 ? 'PRÓXIMA PERGUNTA →' : 'VER MEU DIAGNÓSTICO →'}
+          </button>
+        </div>`;
+    }
+
+    // ─── SELECT OPTION ───────────────────────────────────────────────────────────
+    function selectOption(optIndex) {
+      const q = questions[currentQ];
+      const selected = q.options[optIndex];
+
+      if (q.multiSelect) {
+        // ── Multi-select logic ──
+        if (selected.exclusive) {
+          // Exclusive option: deselect everything else
+          q.options.forEach((_, i) => {
+            document.getElementById('opt-' + i)?.classList.remove('multi-selected', 'selected');
+          });
+          document.getElementById('opt-' + optIndex).classList.add('multi-selected', 'selected');
+        } else {
+          // Deselect exclusive option if present
+          const exclIdx = q.options.findIndex(o => o.exclusive);
+          if (exclIdx >= 0) {
+            document.getElementById('opt-' + exclIdx)?.classList.remove('multi-selected', 'selected');
+          }
+          // Toggle this option
+          const card = document.getElementById('opt-' + optIndex);
+          card.classList.toggle('multi-selected');
+          card.classList.toggle('selected', card.classList.contains('multi-selected'));
+        }
+
+        // Recalculate total risk from all selected
+        let totalRisk = 0;
+        const selectedIndices = [];
+        q.options.forEach((opt, i) => {
+          if (document.getElementById('opt-' + i)?.classList.contains('multi-selected')) {
+            selectedIndices.push(i);
+            totalRisk += opt.risk;
+          }
+        });
+        answers[currentQ] = { optionIndices: selectedIndices, risk: totalRisk, multiSelect: true };
+
+        // Show next if at least one selected
+        if (selectedIndices.length > 0) {
+          document.getElementById('btn-next').classList.add('visible');
+        }
+
+        // Show/hide tip based on accumulated risk
+        const tipBox = document.getElementById('tip-box');
+        if (tipBox && q.tip) {
+          tipBox.style.display = (totalRisk >= q.tip.minRisk && selectedIndices.some(i => !q.options[i].exclusive))
+            ? 'block' : 'none';
+        }
+
+      } else {
+        // ── Single-select logic ──
+        q.options.forEach((_, i) => {
+          document.getElementById('opt-' + i)?.classList.remove('selected');
+        });
+        document.getElementById('opt-' + optIndex).classList.add('selected');
+
+        answers[currentQ] = { optionIndex: optIndex, risk: selected.risk };
+        document.getElementById('btn-next').classList.add('visible');
+
+        // Show tip
+        const tipBox = document.getElementById('tip-box');
+        if (tipBox && q.tip) {
+          if (q.tip.type === 'dynamic') {
+            // Country question — dynamic tip based on treaty status
+            if (selected.treaty === false) {
+              const name = selected.text.replace(/^\S+\s/, '');
+              tipBox.innerHTML = `⚠️ <strong>${name}</strong> não possui acordo de bitributação com o Brasil. Sem a regularização correta, você pode ser tributado nos <strong>dois países sobre a mesma renda</strong>.`;
+              tipBox.className = 'tip-box danger';
+            } else if (selected.treaty === true) {
+              const name = selected.text.replace(/^\S+\s/, '');
+              tipBox.innerHTML = `💡 <strong>${name}</strong> possui acordo de bitributação com o Brasil — mas isso <strong>não elimina todas as obrigações fiscais</strong>. A regularização correta é essencial para aproveitar os benefícios do tratado.`;
+              tipBox.className = 'tip-box warning';
+            } else {
+              tipBox.innerHTML = `💡 Verifique se o seu país possui acordo de bitributação com o Brasil — isso impacta diretamente como você deve estruturar sua situação fiscal.`;
+              tipBox.className = 'tip-box warning';
+            }
+            tipBox.style.display = 'block';
+          } else {
+            tipBox.style.display = (selected.risk >= q.tip.minRisk) ? 'block' : 'none';
+          }
+        }
+      }
+    }
+
+    // ─── NEXT ────────────────────────────────────────────────────────────────────
+    function nextQuestion() {
+      if (answers[currentQ] === undefined) return;
+
+      totalScore += answers[currentQ].risk;
+
+      currentQ++;
+      if (currentQ < questions.length) {
+        renderQuestion(currentQ);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // All questions done → capture
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('progress-bar-wrap').classList.remove('active');
+        const capSection = document.getElementById('capture-section');
+        capSection.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Simulate analysis then show form
+        setTimeout(() => {
+          document.getElementById('capture-loading').style.display = 'none';
+          document.getElementById('capture-form-wrap').style.display = 'block';
+        }, 2800);
+      }
+    }
+
+    // ─── SUBMIT CAPTURE ──────────────────────────────────────────────────────────
+    function submitCapture() {
+      const nameInput  = document.getElementById('user-name');
+      const emailInput = document.getElementById('user-email');
+
+      if (!nameInput.value.trim()) {
+        nameInput.style.borderColor = 'var(--red)';
+        nameInput.focus();
+        return;
+      }
+      if (!emailInput.value.trim() || !emailInput.value.includes('@')) {
+        emailInput.style.borderColor = 'var(--red)';
+        emailInput.focus();
+        return;
+      }
+
+      userName  = nameInput.value.trim().split(' ')[0];
+      userEmail = emailInput.value.trim();
+
+      // Hide capture, show result
+      document.getElementById('capture-section').classList.remove('active');
+      document.getElementById('result-section').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      renderResult();
+    }
+
+    // ─── RENDER RESULT ───────────────────────────────────────────────────────────
+    function renderResult() {
+      const tier = getResultTier();
+      renderTierCard(tier);
+      renderRiskFactors();
+    }
+
+    function getResultTier() {
+      if (totalScore >= 18) return {
+        cls: 'critico',
+        icon: '🚨',
+        label: 'Situação Crítica',
+        title: `${userName}, sua situação exige atenção IMEDIATA`,
+        desc: `Com ${totalScore} pontos de risco identificados, você está em zona de alto risco fiscal. Cada mês sem regularização aumenta as multas e os juros.`
+      };
+      if (totalScore >= 9) return {
+        cls: 'risco',
+        icon: '⚠️',
+        label: 'Risco Alto',
+        title: `${userName}, você está em zona de risco fiscal`,
+        desc: `Identificamos ${totalScore} pontos de atenção na sua situação. Resolver isso agora é muito mais barato do que esperar a Receita te encontrar.`
+      };
+      return {
+        cls: 'atencao',
+        icon: '🔍',
+        label: 'Pontos de Atenção',
+        title: `${userName}, há pontos importantes a verificar`,
+        desc: `Mesmo com um perfil de risco menor, identificamos aspectos da sua situação que precisam de verificação profissional para garantir que você está 100% regularizado.`
+      };
+    }
+
+    function renderTierCard(tier) {
+      document.getElementById('tier-card-area').innerHTML = `
+        <div class="tier-card ${tier.cls}" style="animation: slideUp 0.4s ease;">
+          <div class="tier-icon">${tier.icon}</div>
+          <div class="tier-label">${tier.label}</div>
+          <h2>${tier.title}</h2>
+          <p>${tier.desc}</p>
+        </div>`;
+    }
+
+    function renderRiskFactors() {
+      const factors = getRiskFactors();
+      const container = document.getElementById('risk-factors-list');
+      if (factors.length === 0) {
+        container.innerHTML = '<div class="risk-item"><span class="r-icon">✅</span> Nenhum risco crítico identificado — recomendamos uma verificação preventiva com uma especialista.</div>';
+        return;
+      }
+      container.innerHTML = factors.map(f =>
+        `<div class="risk-item"><span class="r-icon">❌</span>${f}</div>`
+      ).join('');
+    }
+
+    function getRiskFactors() {
+      const factors = [];
+      const a = answers;
+
+      // Q0 — situação atual
+      if (a[0]?.optionIndex === 0) factors.push("Você mora no exterior sem status fiscal definido no Brasil");
+      if (a[0]?.optionIndex === 1) factors.push("Retorno ao Brasil sem encerramento formal do status de não residente");
+      if (a[0]?.optionIndex === 2) factors.push("Saída iminente — é necessário planejar a regularização ANTES de sair");
+
+      // Q2 — declaração de saída
+      if (a[2]?.optionIndex === 1) factors.push("Ausência de Declaração de Saída Definitiva — obrigação não cumprida");
+      if (a[2]?.optionIndex === 2) factors.push("Declaração de Saída com situação incerta — risco de irregularidade");
+      if (a[2]?.optionIndex === 3) factors.push("Declaração de Saída pendente — você já sabe que precisa, mas ainda não fez");
+
+      // Q3 — IRPF
+      if (a[3]?.optionIndex === 0) factors.push("Entrega de IRPF como residente estando no exterior — risco de bitributação");
+      if (a[3]?.optionIndex === 1) factors.push("Interrupção da declaração sem encerramento formal — irregularidade ativa");
+      if (a[3]?.optionIndex === 3) factors.push("Nenhuma declaração realizada — risco de multas retroativas");
+
+      // Q4 — conta bancária
+      if (a[4]?.optionIndex === 0) factors.push("Conta bancária ativa sem adequação para não residente");
+      if (a[4]?.optionIndex === 1) factors.push("Conta mantida aberta sem adequação — pode gerar obrigações não cumpridas");
+
+      // Q5 — imóveis
+      if (a[5]?.optionIndex === 0) factors.push("Imóvel(is) em seu nome sem regularização fiscal para não residente");
+      if (a[5]?.optionIndex === 1) factors.push("Imóvel em conjunto sem adequação ao status de não residente");
+
+      // Q6 — investimentos
+      if (a[6]?.optionIndex === 0 || a[6]?.optionIndex === 1) factors.push("Investimentos no Brasil sem adequação ao status de não residente");
+
+      // Q7 — renda do Brasil (multi-select)
+      const rendaIdxs = a[7]?.optionIndices || (a[7]?.optionIndex != null ? [a[7].optionIndex] : []);
+      if (rendaIdxs.includes(0)) factors.push("Renda de aluguel sem retenção na fonte correta para não residentes");
+      if (rendaIdxs.includes(1)) factors.push("Renda de trabalho recebida sem tributação adequada para não residente");
+      if (rendaIdxs.includes(2)) factors.push("Benefício previdenciário recebido — verificar se IRRF está sendo aplicado corretamente");
+
+      // Q8 — empresa
+      if (a[8]?.optionIndex === 0) factors.push("CNPJ ativo — necessário avaliar impacto da saída fiscal na empresa");
+      if (a[8]?.optionIndex === 2) factors.push("Empresa abandonada sem encerramento formal — multas acumulando mensalmente");
+
+      // Q11 — CPF
+      if (a[11]?.optionIndex === 1) factors.push("CPF com pendências ativas junto à Receita Federal");
+      if (a[11]?.optionIndex === 2) factors.push("CPF suspenso ou com restrições — situação grave");
+      if (a[11]?.optionIndex === 3) factors.push("Status do CPF desconhecido — pode haver restrições sem você saber");
+
+      // Q16 — bens no exterior não declarados
+      if (a[16]?.optionIndex === 1) factors.push("Bens no exterior declarados parcialmente — risco de omissão de rendimentos");
+      if (a[16]?.optionIndex === 2) factors.push("Bens no exterior não declarados à Receita Federal — risco de sonegação");
+      if (a[16]?.optionIndex === 3) factors.push("Bens no exterior potencialmente não declarados — necessária verificação urgente");
+
+      // Q17 — notificações
+      if (a[17]?.optionIndex === 0) factors.push("Notificação da Receita Federal em aberto — risco de evolução para Dívida Ativa");
+      if (a[17]?.optionIndex === 3) factors.push("Situação fiscal não monitorada — comunicações da Receita podem estar pendentes");
+
+      // Q18 — país de residência
+      if (a[18]?.optionIndex != null) {
+        const countryOpt = questions[18].options[a[18].optionIndex];
+        if (countryOpt?.treaty === false) {
+          const countryName = countryOpt.text.replace(/^\S+\s/, '');
+          factors.push(`Residência em ${countryName} — sem acordo de bitributação com o Brasil, risco real de dupla tributação`);
+        }
+      }
+
+      return factors;
+    }
+
+    // ─── KEY EVENTS ──────────────────────────────────────────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const btn = document.getElementById('btn-next');
+        if (btn && btn.classList.contains('visible')) nextQuestion();
+      }
+    });
+  </script>
+</body>
+</html>
