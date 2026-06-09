@@ -697,6 +697,45 @@
       #lawyer-footer { flex-direction: row; align-items: flex-start; }
     }
   </style>
+
+  <!-- ===== MICROSOFT CLARITY ===== -->
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ksoj7nifzg");
+  </script>
+
+  <!-- ===== UTMIFY ===== -->
+  <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-subids async defer></script>
+
+  <!-- ===== META PIXEL ===== -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '4340125066239428');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=4340125066239428&ev=PageView&noscript=1"/>
+  </noscript>
+
+  <!-- ===== UTM CAPTURE (persiste na sessão) ===== -->
+  <script>
+    (function() {
+      var keys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','sck'];
+      var params = new URLSearchParams(window.location.search);
+      keys.forEach(function(k) {
+        var v = params.get(k);
+        if (v) sessionStorage.setItem('msf_' + k, v);
+      });
+    })();
+  </script>
 </head>
 <body>
 
@@ -813,7 +852,7 @@
               <div class="price-now"><span>R$</span> 97</div>
               <div class="price-note">Acesso imediato · Formato digital</div>
             </div>
-            <button class="btn-ebook" onclick="window.open('#ebook-link','_blank')">QUERO MEU EBOOK AGORA →</button>
+            <button class="btn-ebook" onclick="openCheckout()">QUERO MEU EBOOK AGORA →</button>
             <p class="guarantee">🛡️ Garantia de 7 dias. Se não gostar, devolvemos 100% do seu investimento.</p>
           </div>
         </div>
@@ -1316,6 +1355,19 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
       renderResult();
+
+      // ─── META PIXEL: Quiz finalizado ─────────────────────────────────────────
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', {
+          content_name: 'Quiz Saída Fiscal',
+          content_category: 'Quiz Completo'
+        });
+        fbq('trackCustom', 'QuizCompleted', {
+          score: totalScore,
+          email: userEmail,
+          first_name: userName
+        });
+      }
     }
 
     // ─── RENDER RESULT ───────────────────────────────────────────────────────────
@@ -1435,6 +1487,37 @@
       }
 
       return factors;
+    }
+
+    // ─── CHECKOUT COM UTMs + PRE-FILL ────────────────────────────────────────────
+    function openCheckout() {
+      var base = 'https://pay.hotmart.com/E106224304Y';
+      var params = new URLSearchParams();
+
+      // Pre-fill nome e e-mail capturados no quiz
+      if (userName)  params.set('checkoutData.buyerName',  userName);
+      if (userEmail) params.set('checkoutData.buyerEmail', userEmail);
+
+      // Repassa UTMs para o checkout (lê da sessão ou da URL atual)
+      var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','sck'];
+      utmKeys.forEach(function(k) {
+        var v = sessionStorage.getItem('msf_' + k) || new URLSearchParams(window.location.search).get(k);
+        if (v) params.set(k, v);
+      });
+
+      // ─── META PIXEL: AddToCart ────────────────────────────────────────────────
+      if (typeof fbq === 'function') {
+        fbq('track', 'AddToCart', {
+          value: 97.00,
+          currency: 'BRL',
+          content_name: 'Descomplicando Saída Fiscal',
+          content_ids: ['saida-fiscal-ebook'],
+          content_type: 'product'
+        });
+      }
+
+      var url = base + '?' + params.toString();
+      window.open(url, '_blank');
     }
 
     // ─── KEY EVENTS ──────────────────────────────────────────────────────────────
