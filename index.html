@@ -118,11 +118,12 @@
     }
     .pain-list {
       list-style: none;
-      display: inline-flex;
+      display: flex;
       flex-direction: column;
       gap: 10px;
       text-align: left;
-      margin-bottom: 36px;
+      width: fit-content;
+      margin: 0 auto 36px;
     }
     .pain-list li {
       display: flex;
@@ -139,7 +140,10 @@
       margin-top: 1px;
     }
     .btn-primary {
-      display: inline-block;
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
       background: linear-gradient(135deg, var(--red), #c1121f);
       color: white;
       font-size: 17px;
