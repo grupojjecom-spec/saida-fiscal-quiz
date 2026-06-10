@@ -438,6 +438,81 @@
     .btn-capture:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(230,57,70,0.5); }
     .privacy-note { margin-top: 12px; font-size: 12px; color: var(--muted); }
 
+    /* ===== NAME SCREEN ===== */
+    #name-section {
+      display: none;
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: white;
+      padding: 80px 20px 60px;
+      text-align: center;
+      min-height: 100vh;
+    }
+    #name-section.active { display: block; }
+    .name-inner {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .name-inner h2 {
+      font-size: clamp(22px, 4vw, 34px);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .name-inner h2 span { color: var(--orange); }
+    .name-inner p.sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.72);
+      margin-bottom: 32px;
+    }
+    .name-field {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    .name-field:focus-within { border-color: var(--orange); }
+    .name-field span { font-size: 20px; flex-shrink: 0; }
+    .name-field input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      color: white;
+      font-family: 'Inter', sans-serif;
+    }
+    .name-field input::placeholder { color: rgba(255,255,255,0.4); }
+    .btn-begin {
+      display: block;
+      width: 100%;
+      max-width: 480px;
+      margin: 8px auto 0;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 18px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-begin:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(230,57,70,0.45); }
+    .skip-name {
+      display: block;
+      margin-top: 14px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
     /* ===== RESULT SECTION ===== */
     #result-section {
       display: none;
@@ -503,25 +578,28 @@
 
     /* Consequences */
     #consequences-card {
-      background: #fff1f2;
-      border: 1px solid #fecdd3;
+      background: var(--navy);
       border-radius: var(--radius);
       padding: 24px;
       margin-bottom: 24px;
       animation: slideUp 0.5s ease 0.2s both;
     }
-    #consequences-card .section-title { color: #9f1239; }
+    #consequences-card .section-title { color: #fff; }
     .cons-item {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 8px 0;
-      font-size: 14px;
-      color: #881337;
-      border-bottom: 1px solid #fecdd3;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.06);
+      border-left: 4px solid var(--red);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
     }
-    .cons-item:last-child { border-bottom: none; }
-    .cons-item .c-icon { flex-shrink: 0; margin-top: 1px; }
+    .cons-item:last-child { margin-bottom: 0; }
+    .cons-item .c-icon { flex-shrink: 0; font-size: 22px; }
+    .cons-item .c-text { display: flex; flex-direction: column; gap: 2px; }
+    .cons-item .c-title { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.3; }
+    .cons-item .c-sub { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.4; }
 
     /* Ebook CTA block */
     #ebook-cta {
@@ -815,6 +893,34 @@
     </div>
   </section>
 
+  <!-- ===== NAME + EMAIL ===== -->
+  <section id="name-section">
+    <div class="name-inner">
+      <div class="hero-badge">✦ Diagnóstico Gratuito · Personalizado para você</div>
+      <h2>Antes de começar,<br><span>conte um pouco sobre você</span></h2>
+      <p class="sub">Usamos essas informações para personalizar seu diagnóstico e enviar o resultado por e-mail.</p>
+
+      <div class="name-field">
+        <span>👤</span>
+        <input type="text" id="name-input" placeholder="Como gostaria de ser chamado?" maxlength="40" autocomplete="given-name">
+      </div>
+      <div class="name-field">
+        <span>📧</span>
+        <input type="email" id="email-input" placeholder="Qual o seu melhor e-mail?" autocomplete="email">
+      </div>
+
+      <button class="btn-begin" onclick="beginQuiz()">INICIAR MEU DIAGNÓSTICO →</button>
+      <p class="hero-sub-cta">⏱ 4 minutos · Totalmente gratuito · Resultado imediato</p>
+      <span class="skip-name" onclick="beginQuiz()">Pular e continuar sem preencher</span>
+
+      <div class="hero-credentials" style="margin-top:40px;">
+        <div class="cred-item"><span class="icon">⚖️</span> Adv. Jéssica Cavalcante · OAB 63.781/PE</div>
+        <div class="cred-item"><span class="icon">🔒</span> 100% Confidencial</div>
+        <div class="cred-item"><span class="icon">🌍</span> Para Brasileiros no Exterior</div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== QUIZ ===== -->
   <section id="quiz-section">
     <div class="quiz-inner">
@@ -822,8 +928,8 @@
     </div>
   </section>
 
-  <!-- ===== CAPTURE ===== -->
-  <section id="capture-section">
+  <!-- ===== CAPTURE (removido) ===== -->
+  <section id="capture-section" style="display:none">
     <div class="capture-inner">
       <div id="capture-loading">
         <div class="spinner-wrap"></div>
@@ -864,11 +970,41 @@
       </div>
       <div id="consequences-card">
         <div class="section-title">⚠️ O que pode acontecer se você não resolver isso?</div>
-        <div class="cons-item"><span class="c-icon">💸</span> Multas retroativas de até <strong>R$ 20.000,00</strong> + juros Selic por cada ano irregular com a Receita Federal</div>
-        <div class="cons-item"><span class="c-icon">🚫</span> <strong>CPF bloqueado</strong> — impossibilidade de vender imóveis, abrir conta, contratar crédito ou serviços no Brasil</div>
-        <div class="cons-item"><span class="c-icon">💰</span> <strong>Tributação indevida</strong> sobre toda sua renda no exterior como se você ainda morasse no Brasil</div>
-        <div class="cons-item"><span class="c-icon">📩</span> <strong>Dívida Ativa</strong> com execução fiscal — a Receita pode penhorar bens que você tem no Brasil</div>
-        <div class="cons-item"><span class="c-icon">🌐</span> Problemas para <strong>repatriar dinheiro</strong> do exterior ou realizar transferências internacionais</div>
+        <div class="cons-item">
+          <span class="c-icon">💸</span>
+          <div class="c-text">
+            <span class="c-title">Multas de até R$ 20.000+ por ano</span>
+            <span class="c-sub">acumulando a cada ano sem regularização</span>
+          </div>
+        </div>
+        <div class="cons-item">
+          <span class="c-icon">🚫</span>
+          <div class="c-text">
+            <span class="c-title">CPF bloqueado sem aviso</span>
+            <span class="c-sub">impedindo venda de imóveis, crédito e herança</span>
+          </div>
+        </div>
+        <div class="cons-item">
+          <span class="c-icon">💰</span>
+          <div class="c-text">
+            <span class="c-title">Tributação indevida sobre tudo que ganha no exterior</span>
+            <span class="c-sub">como se você ainda morasse no Brasil</span>
+          </div>
+        </div>
+        <div class="cons-item">
+          <span class="c-icon">📩</span>
+          <div class="c-text">
+            <span class="c-title">Dívida Ativa com execução fiscal</span>
+            <span class="c-sub">a Receita pode penhorar bens que você tem no Brasil</span>
+          </div>
+        </div>
+        <div class="cons-item">
+          <span class="c-icon">🌐</span>
+          <div class="c-text">
+            <span class="c-title">Problemas para repatriar dinheiro</span>
+            <span class="c-sub">ou realizar transferências internacionais</span>
+          </div>
+        </div>
       </div>
       <div id="ebook-cta">
         <div class="ebook-pretitle">✦ A solução que você precisa</div>
@@ -1213,6 +1349,15 @@
     function startQuiz() {
       document.getElementById('hero').style.display = 'none';
       document.getElementById('alert-banner').style.display = 'none';
+      document.getElementById('name-section').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => document.getElementById('name-input').focus(), 300);
+    }
+
+    function beginQuiz() {
+      userName  = (document.getElementById('name-input').value.trim().split(' ')[0]) || '';
+      userEmail = (document.getElementById('email-input').value.trim()) || '';
+      document.getElementById('name-section').classList.remove('active');
       document.getElementById('quiz-section').style.display = 'block';
       document.getElementById('progress-bar-wrap').classList.add('active');
       currentQ = 0;
@@ -1358,60 +1503,21 @@
         renderQuestion(currentQ);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // All questions done → capture
+        // All questions done → result directly
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('progress-bar-wrap').classList.remove('active');
-        const capSection = document.getElementById('capture-section');
-        capSection.classList.add('active');
+        document.getElementById('result-section').style.display = 'block';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        renderResult();
 
-        // Simulate analysis then show form
-        setTimeout(() => {
-          document.getElementById('capture-loading').style.display = 'none';
-          document.getElementById('capture-form-wrap').style.display = 'block';
-        }, 2800);
+        // ─── META PIXEL: Quiz finalizado ─────────────────────────────────────
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: 'Quiz Saída Fiscal' });
+          fbq('trackCustom', 'QuizCompleted', { score: totalScore });
+        }
       }
     }
 
-    // ─── SUBMIT CAPTURE ──────────────────────────────────────────────────────────
-    function submitCapture() {
-      const nameInput  = document.getElementById('user-name');
-      const emailInput = document.getElementById('user-email');
-
-      if (!nameInput.value.trim()) {
-        nameInput.style.borderColor = 'var(--red)';
-        nameInput.focus();
-        return;
-      }
-      if (!emailInput.value.trim() || !emailInput.value.includes('@')) {
-        emailInput.style.borderColor = 'var(--red)';
-        emailInput.focus();
-        return;
-      }
-
-      userName  = nameInput.value.trim().split(' ')[0];
-      userEmail = emailInput.value.trim();
-
-      // Hide capture, show result
-      document.getElementById('capture-section').classList.remove('active');
-      document.getElementById('result-section').style.display = 'block';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-
-      renderResult();
-
-      // ─── META PIXEL: Quiz finalizado ─────────────────────────────────────────
-      if (typeof fbq === 'function') {
-        fbq('track', 'Lead', {
-          content_name: 'Quiz Saída Fiscal',
-          content_category: 'Quiz Completo'
-        });
-        fbq('trackCustom', 'QuizCompleted', {
-          score: totalScore,
-          email: userEmail,
-          first_name: userName
-        });
-      }
-    }
 
     // ─── RENDER RESULT ───────────────────────────────────────────────────────────
     function renderResult() {
@@ -1425,21 +1531,21 @@
         cls: 'critico',
         icon: '🚨',
         label: 'Situação Crítica',
-        title: `${userName}, sua situação exige atenção IMEDIATA`,
+        title: userName ? `${userName}, sua situação exige atenção IMEDIATA` : `Sua situação exige atenção IMEDIATA`,
         desc: `Com ${totalScore} pontos de risco identificados, você está em zona de alto risco fiscal. Cada mês sem regularização aumenta as multas e os juros.`
       };
       if (totalScore >= 9) return {
         cls: 'risco',
         icon: '⚠️',
         label: 'Risco Alto',
-        title: `${userName}, você está em zona de risco fiscal`,
+        title: userName ? `${userName}, você está em zona de risco fiscal` : `Você está em zona de risco fiscal`,
         desc: `Identificamos ${totalScore} pontos de atenção na sua situação. Resolver isso agora é muito mais barato do que esperar a Receita te encontrar.`
       };
       return {
         cls: 'atencao',
         icon: '🔍',
         label: 'Pontos de Atenção',
-        title: `${userName}, há pontos importantes a verificar`,
+        title: userName ? `${userName}, há pontos importantes a verificar` : `Há pontos importantes a verificar`,
         desc: `Mesmo com um perfil de risco menor, identificamos aspectos da sua situação que precisam de verificação profissional para garantir que você está 100% regularizado.`
       };
     }
@@ -1537,10 +1643,6 @@
       var base = 'https://pay.hotmart.com/E106224304Y';
       var params = new URLSearchParams();
 
-      // Pre-fill nome e e-mail capturados no quiz
-      if (userName)  params.set('name',  userName);
-      if (userEmail) params.set('email', userEmail);
-
       // Repassa UTMs para o checkout (lê da sessão ou da URL atual)
       var utmKeys = ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','src','sck'];
       utmKeys.forEach(function(k) {
@@ -1566,6 +1668,10 @@
     // ─── KEY EVENTS ──────────────────────────────────────────────────────────────
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
+        // Enter na tela de nome/email
+        const nameSection = document.getElementById('name-section');
+        if (nameSection && nameSection.classList.contains('active')) { beginQuiz(); return; }
+        // Enter no quiz
         const btn = document.getElementById('btn-next');
         if (btn && btn.classList.contains('visible')) nextQuestion();
       }
