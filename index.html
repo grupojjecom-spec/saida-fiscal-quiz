@@ -1512,7 +1512,24 @@
 
         // ─── META PIXEL: Quiz finalizado ─────────────────────────────────────
         if (typeof fbq === 'function') {
+          var tierData = getResultTier();
+          // Lead padrão — otimização de campanha
           fbq('track', 'Lead', { content_name: 'Quiz Saída Fiscal' });
+          // ViewContent padrão — base para audiência de remarketing no Meta
+          fbq('track', 'ViewContent', {
+            content_name: 'Resultado Quiz Saída Fiscal',
+            content_category: 'Quiz',
+            content_ids: ['resultado-saida-fiscal'],
+            content_type: 'product',
+            value: 0,
+            currency: 'BRL'
+          });
+          // Evento customizado com tier — segmenta por perfil de risco
+          fbq('trackCustom', 'DiagnosticoVisualizado', {
+            score: totalScore,
+            tier: tierData.cls   // 'critico' | 'risco' | 'atencao'
+          });
+          // Evento legado mantido
           fbq('trackCustom', 'QuizCompleted', { score: totalScore });
         }
       }
