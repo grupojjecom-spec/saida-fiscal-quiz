@@ -601,6 +601,121 @@
     .cons-item .c-title { font-size: 15px; font-weight: 700; color: #fff; line-height: 1.3; }
     .cons-item .c-sub { font-size: 13px; color: rgba(255,255,255,0.55); line-height: 1.4; }
 
+    /* ===== LOADING / MICRO-COMMITMENT SCREEN ===== */
+    #loading-section {
+      display: none;
+      background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
+      min-height: 100vh;
+      padding: 60px 20px 40px;
+      text-align: center;
+      color: white;
+    }
+    #loading-section.active { display: block; }
+    .loading-inner { max-width: 520px; margin: 0 auto; }
+
+    /* Spinner */
+    .loading-spinner-wrap { margin-bottom: 32px; }
+    .spinner {
+      width: 56px; height: 56px;
+      border: 4px solid rgba(255,255,255,0.15);
+      border-top-color: var(--orange);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-title {
+      font-size: clamp(18px, 3.5vw, 26px);
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+    .loading-title span { color: var(--orange); }
+    .loading-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 36px;
+    }
+
+    /* Progress bar loading */
+    .loading-bar-wrap {
+      background: rgba(255,255,255,0.1);
+      border-radius: 99px;
+      height: 6px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+    .loading-bar-fill {
+      height: 100%;
+      background: var(--orange);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.6s ease;
+    }
+
+    /* Micro-commitment cards */
+    .micro-card {
+      display: none;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 24px 20px;
+      margin-bottom: 16px;
+      animation: slideUp 0.4s ease both;
+    }
+    .micro-card.visible { display: block; }
+    .micro-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--orange);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .micro-question {
+      font-size: clamp(15px, 2.5vw, 18px);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 18px;
+    }
+    .micro-btns { display: flex; gap: 12px; justify-content: center; }
+    .micro-btn {
+      flex: 1; max-width: 160px;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+    .micro-btn:active { transform: scale(0.97); }
+    .micro-btn.yes { background: var(--orange); color: white; }
+    .micro-btn.no  { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+
+    /* Ready state */
+    .loading-ready {
+      display: none;
+      animation: slideUp 0.4s ease both;
+    }
+    .loading-ready.visible { display: block; }
+    .ready-icon { font-size: 48px; margin-bottom: 12px; }
+    .ready-title { font-size: clamp(20px, 4vw, 28px); font-weight: 900; margin-bottom: 8px; }
+    .ready-sub { font-size: 14px; color: rgba(255,255,255,0.6); margin-bottom: 28px; }
+    .btn-ver-resultado {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 18px 36px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      width: 100%;
+      max-width: 400px;
+    }
+
     /* Ebook CTA block */
     #ebook-cta {
       background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
@@ -960,6 +1075,59 @@
           <p class="privacy-note">🔒 Seus dados estão seguros. Sem spam.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== LOADING / MICRO-COMMITMENT ===== -->
+  <section id="loading-section">
+    <div class="loading-inner">
+
+      <!-- Spinner + texto inicial -->
+      <div id="loading-spinner-area" class="loading-spinner-wrap">
+        <div class="spinner"></div>
+        <div class="loading-title">Estamos cruzando<br><span>seus dados fiscais</span></div>
+        <p class="loading-sub">Analisando suas respostas com base na legislação vigente para brasileiros no exterior...</p>
+        <div class="loading-bar-wrap"><div class="loading-bar-fill" id="loading-bar"></div></div>
+      </div>
+
+      <!-- Micro-comprometimento 1 -->
+      <div class="micro-card" id="micro-1">
+        <div class="micro-label">Confirmação 1 de 3</div>
+        <div class="micro-question">Você tem família no Brasil e não quer que uma dívida com a Receita Federal impeça você de ajudar eles quando precisar?</div>
+        <div class="micro-btns">
+          <button class="micro-btn yes" onclick="nextMicro(1, true)">✓ Com certeza</button>
+          <button class="micro-btn no"  onclick="nextMicro(1, false)">Não se aplica</button>
+        </div>
+      </div>
+
+      <!-- Micro-comprometimento 2 -->
+      <div class="micro-card" id="micro-2">
+        <div class="micro-label">Confirmação 2 de 3</div>
+        <div class="micro-question">Se descobrisse hoje que seu CPF está irregular, você gostaria de resolver antes que vire um problema maior?</div>
+        <div class="micro-btns">
+          <button class="micro-btn yes" onclick="nextMicro(2, true)">✓ Sim, quero resolver</button>
+          <button class="micro-btn no"  onclick="nextMicro(2, false)">Não agora</button>
+        </div>
+      </div>
+
+      <!-- Micro-comprometimento 3 -->
+      <div class="micro-card" id="micro-3">
+        <div class="micro-label">Confirmação 3 de 3</div>
+        <div class="micro-question">Você trabalhou duro para construir sua vida no exterior e não quer ver tudo isso ameaçado por uma irregularidade fiscal que você nem sabia que tinha?</div>
+        <div class="micro-btns">
+          <button class="micro-btn yes" onclick="nextMicro(3, true)">✓ Não quero esse risco</button>
+          <button class="micro-btn no"  onclick="nextMicro(3, false)">Não me preocupo</button>
+        </div>
+      </div>
+
+      <!-- Tela final: resultado pronto -->
+      <div class="loading-ready" id="loading-ready">
+        <div class="ready-icon">✅</div>
+        <div class="ready-title">Seu diagnóstico está pronto</div>
+        <p class="ready-sub">Identificamos pontos importantes na sua situação fiscal. Veja agora.</p>
+        <button class="btn-ver-resultado" onclick="showResult()">VER MEU DIAGNÓSTICO →</button>
+      </div>
+
     </div>
   </section>
 
@@ -1334,7 +1502,7 @@
         options: [
           { text: "Muito preocupado — sei que tenho problemas a resolver", risk: 2 },
           { text: "Um pouco preocupado — acho que pode ter algo errado", risk: 1 },
-          { text: "Não estava preocupado, mas esse quiz me fez pensar", risk: 1 },
+          { text: "Não estava preocupado, mas esse diagnóstico me fez pensar", risk: 1 },
           { text: "Não me preocupo — acredito estar tudo em ordem", risk: 0 }
         ],
         tip: null
@@ -1506,12 +1674,12 @@
         renderQuestion(currentQ);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
-        // All questions done → result directly
+        // All questions done → loading screen
         document.getElementById('quiz-section').style.display = 'none';
         document.getElementById('progress-bar-wrap').classList.remove('active');
-        document.getElementById('result-section').style.display = 'block';
+        document.getElementById('loading-section').classList.add('active');
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        renderResult();
+        startLoadingSequence();
 
         // ─── META PIXEL: Quiz finalizado ─────────────────────────────────────
         if (typeof fbq === 'function') {
@@ -1683,6 +1851,50 @@
 
       var url = base + '?' + params.toString();
       window.open(url, '_blank');
+    }
+
+    // ─── LOADING + MICRO-COMMITMENTS ─────────────────────────────────────────────
+    var microStep = 0;
+
+    function startLoadingSequence() {
+      microStep = 0;
+      var bar = document.getElementById('loading-bar');
+      // Barra sobe até 33% enquanto spinner aparece
+      setTimeout(function() { bar.style.width = '33%'; }, 100);
+      // Primeira micro-afirmação aparece após 2s
+      setTimeout(function() {
+        bar.style.width = '50%';
+        document.getElementById('loading-spinner-area').style.display = 'none';
+        document.getElementById('micro-1').classList.add('visible');
+      }, 2000);
+    }
+
+    function nextMicro(step, answer) {
+      var bar = document.getElementById('loading-bar');
+      document.getElementById('micro-' + step).classList.remove('visible');
+      if (step === 1) {
+        bar.style.width = '66%';
+        setTimeout(function() {
+          document.getElementById('micro-2').classList.add('visible');
+        }, 300);
+      } else if (step === 2) {
+        bar.style.width = '83%';
+        setTimeout(function() {
+          document.getElementById('micro-3').classList.add('visible');
+        }, 300);
+      } else if (step === 3) {
+        bar.style.width = '100%';
+        setTimeout(function() {
+          document.getElementById('loading-ready').classList.add('visible');
+        }, 500);
+      }
+    }
+
+    function showResult() {
+      document.getElementById('loading-section').classList.remove('active');
+      document.getElementById('result-section').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      renderResult();
     }
 
     // ─── KEY EVENTS ──────────────────────────────────────────────────────────────
